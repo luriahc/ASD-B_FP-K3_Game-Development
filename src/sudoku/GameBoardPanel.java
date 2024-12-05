@@ -8,6 +8,7 @@
  * 3 - 5026231211 - Hafidz Putra Dermawan
  */
 
+
 package sudoku;
 import java.awt.*;
 import java.awt.event.*;
@@ -20,7 +21,7 @@ public class GameBoardPanel extends JPanel {
     public static final int CELL_SIZE = 60;   // Cell width/height in pixels
     public static final int BOARD_WIDTH  = CELL_SIZE * SudokuConstants.GRID_SIZE;
     public static final int BOARD_HEIGHT = CELL_SIZE * SudokuConstants.GRID_SIZE;
-                                              // Board width/height in pixels
+    // Board width/height in pixels
 
     // Define properties
     /** The game board composes of 9x9 Cells (customized JTextFields) */
@@ -41,11 +42,17 @@ public class GameBoardPanel extends JPanel {
         }
 
         // [TODO 3] Allocate a common listener as the ActionEvent listener for all the
-        //  Cells (JTextFields)
-        // .........
+        // [TODO 3]
+        CellInputListener listener = new CellInputListener();
 
         // [TODO 4] Adds this common listener to all editable cells
-        // .........
+        for (int row = 0; row < SudokuConstants.GRID_SIZE; ++row) {
+            for (int col = 0; col < SudokuConstants.GRID_SIZE; ++col) {
+                if (cells[row][col].isEditable()) {
+                    cells[row][col].addActionListener(listener);   // For all editable rows and cols
+                }
+            }
+        }
 
         super.setPreferredSize(new Dimension(BOARD_WIDTH, BOARD_HEIGHT));
     }
@@ -73,14 +80,48 @@ public class GameBoardPanel extends JPanel {
     public boolean isSolved() {
         for (int row = 0; row < SudokuConstants.GRID_SIZE; ++row) {
             for (int col = 0; col < SudokuConstants.GRID_SIZE; ++col) {
-                    if (cells[row][col].status == CellStatus.TO_GUESS || cells[row][col].status == CellStatus.WRONG_GUESS) {
-                        return false;
-                    }
+                if (cells[row][col].status == CellStatus.TO_GUESS || cells[row][col].status == CellStatus.WRONG_GUESS) {
+                    return false;
                 }
+            }
         }
         return true;
     }
 
     // [TODO 2] Define a Listener Inner Class for all the editable Cells
-    // .........
+    private class CellInputListener implements ActionListener {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            // Get a reference of the JTextField that triggers this action event
+            Cell sourceCell = (Cell)e.getSource();
+
+            // Retrieve the int entered
+            int numberIn = Integer.parseInt(sourceCell.getText());
+            // For debugging
+            System.out.println("You entered " + numberIn);
+
+            /*
+             * [TODO 5] (later - after TODO 3 and 4)
+             * Check the numberIn against sourceCell.number.
+             * Update the cell status sourceCell.status,
+             * and re-paint the cell via sourceCell.paint().
+             */
+            if (numberIn == sourceCell.number) {
+                sourceCell.status = CellStatus.CORRECT_GUESS;
+            } else {
+                sourceCell.status = CellStatus.WRONG_GUESS;
+            }
+            sourceCell.paint(); // Repaint the cell to reflect its updated status
+
+            /*
+             * [TODO 6] (later)
+             * Check if the player has solved the puzzle after this move,
+             *   by calling isSolved(). Put up a congratulation JOptionPane, if so.
+             */
+            if (isSolved()) {
+                JOptionPane.showMessageDialog(null, "Congratulations! You've solved the puzzle!", "Puzzle Solved", JOptionPane.INFORMATION_MESSAGE);
+            }
+
+        }
+    }
 }
