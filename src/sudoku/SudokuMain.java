@@ -34,6 +34,46 @@ public class SudokuMain extends JFrame {
         // Add game board
         cp.add(board, BorderLayout.CENTER);
 
+        // Add a menu bar
+        JMenuBar menuBar = new JMenuBar();
+
+        // File menu
+        JMenu fileMenu = new JMenu("File");
+        JMenuItem newGameItem = new JMenuItem("New Game");
+        newGameItem.addActionListener(e -> board.newGame());  // Start new game
+        JMenuItem resetGameItem = new JMenuItem("Reset Game");
+        resetGameItem.addActionListener(e -> board.resetGame());  // Reset the game
+        JMenuItem exitItem = new JMenuItem("Exit");
+        exitItem.addActionListener(e -> System.exit(0));
+        fileMenu.add(newGameItem);
+        fileMenu.add(resetGameItem);
+        fileMenu.addSeparator();
+        fileMenu.add(exitItem);
+
+        // Options menu for difficulty
+        JMenu optionsMenu = new JMenu("Options");
+        JMenuItem easyItem = new JMenuItem("Easy");
+        easyItem.addActionListener(e -> board.setDifficulty("Easy"));
+        JMenuItem mediumItem = new JMenuItem("Intermediate");
+        mediumItem.addActionListener(e -> board.setDifficulty("Intermediate"));
+        JMenuItem hardItem = new JMenuItem("Hard");
+        hardItem.addActionListener(e -> board.setDifficulty("Hard"));
+        optionsMenu.add(easyItem);
+        optionsMenu.add(mediumItem);
+        optionsMenu.add(hardItem);
+
+        // Help menu
+        JMenu helpMenu = new JMenu("Help");
+        JMenuItem aboutItem = new JMenuItem("About");
+        aboutItem.addActionListener(e -> JOptionPane.showMessageDialog(this, "Sudoku Game v1.0"));
+        helpMenu.add(aboutItem);
+
+        // Add menus to the menu bar
+        menuBar.add(fileMenu);
+        menuBar.add(optionsMenu);
+        menuBar.add(helpMenu);
+        setJMenuBar(menuBar);
+
         // Add timer and top panel
         JPanel topPanel = new JPanel(new BorderLayout());
         topPanel.add(timerLabel, BorderLayout.WEST);
@@ -73,6 +113,7 @@ public class SudokuMain extends JFrame {
         // Status listener
         board.addStatusListener(e -> updateStatusBar());
 
+        // Setup frame
         pack();
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setTitle("Sudoku");
