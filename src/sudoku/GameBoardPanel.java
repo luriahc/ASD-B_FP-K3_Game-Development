@@ -25,6 +25,7 @@ public class GameBoardPanel extends JPanel {
     private Cell[][] cells = new Cell[SudokuConstants.GRID_SIZE][SudokuConstants.GRID_SIZE];
     private Puzzle puzzle = new Puzzle();
     private EventListenerList listenerList = new EventListenerList();
+    private String currentDifficulty = "Easy";
 
     public GameBoardPanel() {
         super.setLayout(new GridLayout(SudokuConstants.GRID_SIZE, SudokuConstants.GRID_SIZE));
@@ -47,12 +48,38 @@ public class GameBoardPanel extends JPanel {
     }
 
     public void newGame() {
-        puzzle.newPuzzle(20);
+        int cellsToGuess = getCellsToGuess(currentDifficulty);
+        puzzle.newPuzzle(cellsToGuess);  // Pass the number of cells to guess
 
         for (int row = 0; row < SudokuConstants.GRID_SIZE; ++row) {
             for (int col = 0; col < SudokuConstants.GRID_SIZE; ++col) {
-                cells[row][col].newGame(puzzle.numbers[row][col], puzzle.isGiven[row][col]);
+                try {
+                    // Assuming puzzle.numbers[row][col] is an int[][] (no need for parsing)
+                    int number = puzzle.numbers[row][col];
+                    cells[row][col].newGame(number, puzzle.isGiven[row][col]);
+                } catch (Exception e) {
+                    // Handle any unexpected exceptions
+                    System.out.println("Error setting number at (" + row + "," + col + "): " + e.getMessage());
+                    cells[row][col].newGame(0, puzzle.isGiven[row][col]);  // Use default or error value
+                }
             }
+        }
+    }
+
+    public void resetGame() {
+        newGame();
+    }
+
+    private int getCellsToGuess(String difficulty) {
+        switch (difficulty) {
+            case "Easy":
+                return 40;  // Example: 40 cells to guess for Easy
+            case "Medium":
+                return 50;  // Example: 50 cells to guess for Medium
+            case "Hard":
+                return 60;  // Example: 60 cells to guess for Hard
+            default:
+                return 40;  // Default to Easy if something unexpected happens
         }
     }
 
